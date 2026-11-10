@@ -1,0 +1,21 @@
+/* Витрина как в референсе: белая страница, плитки категорий 2 в ряд — крупное фото и название под ним */
+:root { --page: #ffffff; --shadow: 0 2px 14px rgba(30, 30, 40, .08); }
+html, body { background: #ffffff; }
+.cats { background: #ffffff; }
+
+/* кнопки шапки — скруглённые квадраты */
+.round-btn { width: 40px; height: 40px; border-radius: 14px; background: #f5f5f6; box-shadow: none; }
+
+/* вкладки-группы */
+.chip { height: 36px; padding: 0 16px; border-radius: 18px; background: #f2f2f3; color: #9a9aa0; font-size: 14px; font-weight: 500; }
+.chip.is-active { background: #26282e; color: #ffffff; }
+
+/* сетка плиток */
+.section h2 { font-size: 19px; font-weight: 700; margin: 10px 0 12px; }
+.grid:has(> .tile) { display: grid; flex-direction: row; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 560px) { .grid:has(> .tile) { grid-template-columns: repeat(3, 1fr); } }
+.card.tile { flex-direction: column; align-items: stretch; gap: 0; padding: 6px 6px 16px; border-radius: 24px; background: #ffffff; box-shadow: var(--shadow); }
+.card.tile::after { display: none; }
+.card.tile .card__img { width: 100%; height: auto; aspect-ratio: 1 / 1; border-radius: 19px; background: #f1efeb; font-size: 54px; }
+.card.tile .card__body { padding: 14px 12px 0; justify-content: flex-start; }
+.card.tile .card__name { font-size: 15px; font-weight: 700; line-height: 1.25; letter-spacing: -.005em; }
