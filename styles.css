@@ -1,29 +1,29 @@
 :root {
-  --page: #ffffff;
-  --bg: #f3f5f4;
+  --page: #faf6ef;
+  --bg: #f1e7d6;
   --surface: #ffffff;
-  --text: #16201c;
-  --muted: #76807b;
-  --line: #e4e9e6;
-  --accent: #0f6b52;
+  --text: #2b2118;
+  --muted: #8a7b6a;
+  --line: #e6dac6;
+  --accent: #8b5a2b;
   --accent-text: #ffffff;
-  --accent-soft: #e3f1ec;
+  --accent-soft: #f3e6d2;
   --danger: #e5484d;
-  --ok: #1fa971;
-  --shadow: 0 4px 18px rgba(16, 40, 30, .08);
+  --ok: #5f8a3a;
+  --shadow: 0 4px 18px rgba(60, 40, 20, .10);
   --radius: 16px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --page: #0f1311;
-    --bg: #171c19;
-    --surface: #1b211e;
-    --text: #eef2f0;
-    --muted: #8f9a94;
-    --line: #2a322e;
-    --accent: #3fb58f;
-    --accent-text: #08130f;
-    --accent-soft: #1d2e27;
+    --page: #1e1611;
+    --bg: #251c15;
+    --surface: #2a2019;
+    --text: #f3e9dc;
+    --muted: #a8987f;
+    --line: #3a2e24;
+    --accent: #d9a04a;
+    --accent-text: #1e1611;
+    --accent-soft: #3a2c1e;
     --shadow: 0 4px 18px rgba(0, 0, 0, .4);
   }
 }
@@ -41,7 +41,7 @@ body.cat-open .cartbar { z-index: 30; }
 
 /* Шапка с названием */
 .hero { background: var(--accent); color: #fff; padding: calc(12px + env(safe-area-inset-top)) 16px 22px; border-radius: 0 0 24px 24px; }
-@media (prefers-color-scheme: dark) { .hero { color: #08130f; } }
+@media (prefers-color-scheme: dark) { .hero { color: #1e1611; } }
 .hero__bar { display: flex; align-items: center; gap: 8px; }
 .hero__spacer { flex: 1; }
 .round-btn { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .18); color: inherit; }
@@ -63,9 +63,9 @@ body.cat-open .cartbar { z-index: 30; }
 .banner { flex: 0 0 82%; scroll-snap-align: start; border-radius: 16px; padding: 16px; min-height: 96px; display: flex; flex-direction: column; justify-content: center; gap: 4px; color: #fff; }
 .banner b { font-size: 17px; }
 .banner span { font-size: 13px; opacity: .9; }
-.banner--0 { background: linear-gradient(135deg, #0f6b52, #2a9d78); }
+.banner--0 { background: linear-gradient(135deg, #8b5a2b, #b07a45); }
 .banner--1 { background: linear-gradient(135deg, #b4532a, #e08a4c); }
-.banner--2 { background: linear-gradient(135deg, #3a4f8f, #6c86d6); }
+.banner--2 { background: linear-gradient(135deg, #6e2f2f, #a55454); }
 
 .cats { position: sticky; top: 0; z-index: 5; background: var(--page); display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; scrollbar-width: none; }
 .cats::-webkit-scrollbar { display: none; }
@@ -157,7 +157,7 @@ body.cat-open .cartbar { z-index: 30; }
 
 /* Статусы заказа */
 .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 600; }
-.badge.is-done { background: #dff5ea; color: #1a7f58; }
+.badge.is-done { background: #e8efd9; color: #4a6b24; }
 .badge.is-cancel { background: #fde6e7; color: var(--danger); }
 .track { list-style: none; margin: 14px 0 6px; padding: 0; display: grid; gap: 10px; }
 .track li { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; }
