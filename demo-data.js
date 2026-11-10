@@ -6,7 +6,7 @@ window.DEMO_DATA = {
     { group: 'Полуфабрикаты', name: 'Пельмени', emoji: '🥟', image: 'img/categories/pelmeni.webp' },
     { group: 'Полуфабрикаты', name: 'Вареники', emoji: '🥟', image: 'img/categories/vareniki.webp' },
     { group: 'Полуфабрикаты', name: 'Прочие полуфабрикаты', emoji: '🍲', image: 'img/categories/prochie-polufabrikaty.webp' },
-    { group: 'Полуфабрикаты', name: 'Манты/позы/буузы', emoji: '🥟', image: '' },
+    { group: 'Полуфабрикаты', name: 'Манты/позы/буузы', emoji: '🥟', image: 'img/categories/pozy.webp' },
     { group: 'Полуфабрикаты', name: 'Котлеты/биточки', emoji: '🍔', image: 'img/categories/kotlety.webp' },
     { group: 'Полуфабрикаты', name: 'Блины', emoji: '🥞', image: 'img/categories/blinchiki.webp' },
     { group: 'Колбасы', name: 'Варёные колбасы', emoji: '🌭', image: 'img/categories/vareny-kolbasy.webp' },
