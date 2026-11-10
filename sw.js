@@ -1,6 +1,6 @@
 // Сервисный воркер: статика открывается без сети, данные из таблицы всегда берутся свежими.
 // При изменении файлов сайта поднимите номер версии, чтобы клиенты получили обновление.
-var VERSION = 'v2';
+var VERSION = 'v2-nordic';
 var CACHE = 'cheese-' + VERSION;
 var FILES = ['./', 'index.html', 'styles.css', 'config.js', 'demo-data.js', 'app.js', 'checkout.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
