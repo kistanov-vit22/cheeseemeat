@@ -201,7 +201,7 @@ body.cat-open .cartbar { z-index: 30; }
 .banners { gap: 10px; padding-top: 12px; }
 .banner { border-radius: 20px; padding: 18px; min-height: 92px; position: relative; color: var(--text); }
 .banner b { font-weight: 600; }
-.banner--0 { flex: 0 0 90%; min-height: 0; aspect-ratio: 1678 / 937; padding: 0; background: #222 url("image.png") center / cover no-repeat; }
+.banner--0 { flex: 0 0 90%; min-height: 0; aspect-ratio: 1678 / 937; padding: 0; background: #222 url("banner.jpg") center / cover no-repeat; }
 .banner--0 b, .banner--0 span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .banner--1 { background: var(--bg); color: var(--text); }
 .banner--2 { background: var(--accent); color: #fff; }
