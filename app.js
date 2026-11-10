@@ -118,7 +118,7 @@
     // пустые категории не показываем
     var used = {};
     catalog.forEach(function (p) { used[p.category] = true; });
-    cats = cats.filter(function (c) { return used[c.name]; });
+    if (!CFG.showEmptyCategories) cats = cats.filter(function (c) { return used[c.name]; });
     return { catalog: catalog, categories: cats, zones: d.zones || [], pickup: d.pickup || [], settings: d.settings || {} };
   }
 
@@ -292,6 +292,7 @@
   // категория
   function categoryBody(name) {
     var items = state.data.catalog.filter(function (p) { return p.category === name; });
+    if (!items.length) return '<div class="empty">Товары появятся совсем скоро</div>';
     return '<div class="grid">' + items.map(cardHTML).join('') + '</div>';
   }
   function openCategory(name) {
