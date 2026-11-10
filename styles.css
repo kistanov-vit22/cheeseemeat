@@ -174,3 +174,45 @@ body.cat-open .cartbar { z-index: 30; }
 .price { white-space: nowrap; }
 .card__foot .btn--sm { padding: 0 10px; white-space: nowrap; font-size: 13px; }
 .card__foot .price { font-size: 15px; }
+
+
+/* ===== Скандинавия: светлая тема, список категорий, фото-баннер ===== */
+:root, :root * { color-scheme: light; }
+:root {
+  --page: #f2f0ec; --bg: #e8e5df; --surface: #ffffff; --text: #222222; --muted: #66625b;
+  --line: #e4e0d8; --accent: #8f6238; --accent-text: #ffffff; --accent-soft: #ede3d3;
+  --shadow: 0 2px 10px rgba(40, 30, 20, .06); --radius: 20px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #f2f0ec; --bg: #e8e5df; --surface: #ffffff; --text: #222222; --muted: #66625b;
+    --line: #e4e0d8; --accent: #8f6238; --accent-text: #ffffff; --accent-soft: #ede3d3;
+    --shadow: 0 2px 10px rgba(40, 30, 20, .06);
+  }
+}
+.hero { background: transparent; color: var(--text); border-radius: 0; padding: calc(16px + env(safe-area-inset-top)) 16px 6px; }
+.round-btn { width: 44px; height: 44px; background: #fff; color: var(--text); box-shadow: var(--shadow); }
+.hero__brand { margin-top: 22px; }
+.hero__brand h1 { font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; color: var(--text); }
+.hero__brand p { margin-top: 6px; font-size: 14px; color: var(--muted); opacity: 1; }
+.search input { background: #fff; border: 0; border-radius: 20px; box-shadow: var(--shadow); color: var(--text); }
+.placebar { background: #fff; border: 0; border-radius: 20px; min-height: 54px; box-shadow: var(--shadow); color: var(--text); }
+.placebar svg:first-child { color: var(--accent); }
+.banners { gap: 10px; padding-top: 12px; }
+.banner { border-radius: 20px; padding: 18px; min-height: 92px; position: relative; color: var(--text); }
+.banner b { font-weight: 600; }
+.banner--0 { flex: 0 0 90%; min-height: 0; aspect-ratio: 1678 / 937; padding: 0; background: #222 url("image.png") center / cover no-repeat; }
+.banner--0 b, .banner--0 span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.banner--1 { background: var(--bg); color: var(--text); }
+.banner--2 { background: var(--accent); color: #fff; }
+.chip { height: 40px; padding: 0 18px; border: 0; border-radius: 20px; background: #fff; color: var(--text); font-weight: 500; box-shadow: none; }
+.chip.is-active { background: #222; color: #f2f0ec; }
+.section h2 { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.card { border-radius: 20px; box-shadow: var(--shadow); border: 0; }
+.grid:has(> .tile) { display: flex; flex-direction: column; gap: 10px; }
+.card.tile { display: flex; flex-direction: row; align-items: center; gap: 14px; padding: 8px; width: 100%; background: #fff; }
+.card.tile .card__img { width: 60px; height: 60px; flex: none; border-radius: 14px; background: #ede9e1; display: grid; place-items: center; font-size: 30px; aspect-ratio: auto; }
+.card.tile .card__body { flex: 1; padding: 0; }
+.card.tile .card__name { font-weight: 600; font-size: 16px; color: var(--text); }
+.card.tile::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: 14px; border-right: 2px solid var(--muted); border-top: 2px solid var(--muted); transform: rotate(45deg); }
+.btn:not(.btn--sm) { border-radius: 20px; }
