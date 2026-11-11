@@ -1,8 +1,8 @@
 // Сервисный воркер: статика открывается без сети, данные из таблицы всегда берутся свежими.
 // При изменении файлов сайта поднимите номер версии, чтобы клиенты получили обновление.
-var VERSION = 'v4-grid';
+var VERSION = 'v5-grid';
 var CACHE = 'cheese-' + VERSION;
-var FILES = ['./', 'index.html', 'styles.css?v=3', 'tiles.css?v=4', 'config.js?v=3', 'demo-data.js?v=5', 'app.js?v=3', 'checkout.js?v=3', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+var FILES = ['./', 'index.html', 'styles.css?v=3', 'tiles.css?v=4', 'config.js?v=3', 'demo-data.js?v=6', 'app.js?v=3', 'checkout.js?v=3', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
