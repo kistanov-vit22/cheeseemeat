@@ -48,6 +48,7 @@
     search: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/>',
     menu: '<path d="M5 8h14M5 12h14M5 16h14"/>',
     chevron: '<path d="M9 6l6 6-6 6"/>',
+    cart: '<path d="M3 4h2.2l2 11h10.2l1.9-8H6.2"/><circle cx="9" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/>',
     orders: '<path d="M7 4h10a1 1 0 0 1 1 1v15l-3-1.8L12 20l-3-1.8L6 20V5a1 1 0 0 1 1-1z"/><path d="M9 9h6M9 13h6"/>'
   };
   function icon(name, size) {
@@ -103,6 +104,7 @@
         id: String(r.id), category: String(r.category || 'Другое'), name: String(r.name || ''),
         description: String(r.description || ''), price: Number(r.price) || 0, weight: String(r.weight || ''),
         emoji: String(r.emoji || '🍽️'), image: String(r.image || ''),
+        badge: String(r.badge || ''), oldPrice: Number(r.oldPrice) || 0,
         available: !(r.available === false || String(r.available).toLowerCase() === 'false' || String(r.available) === '0' || String(r.available).toLowerCase() === 'нет'),
       };
     }).filter(function (p) { return p.id && p.name; });
@@ -153,26 +155,68 @@
     return '<div class="stepper"><button data-action="dec" data-id="' + esc(p.id) + '" aria-label="Меньше">−</button><span>' + q + '</span><button data-action="inc" data-id="' + esc(p.id) + '" aria-label="Больше">+</button></div>';
   }
 
-  function mediaHTML(image, emoji) {
-    return image
-      ? '<img src="' + esc(image) + '" alt="" loading="lazy" onerror="this.parentNode.textContent=\'' + esc(emoji) + '\'">'
-      : esc(emoji);
+  // заглушка без фото: аккуратный значок вместо эмодзи
+  var PH = '<svg class="ph" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 46V35L44 17l12 14v15z"/><path d="M8 35h36l12-4"/><circle cx="20" cy="41" r="2.2"/><circle cx="34" cy="42" r="1.8"/><circle cx="46" cy="40" r="2"/></svg>';
+  function catImage(name) {
+    var cs = state.data.categories;
+    for (var i = 0; i < cs.length; i++) if (cs[i].name === name) return cs[i].image || '';
+    return '';
   }
+  function catCount(name) {
+    var n = 0, cs = state.data.catalog;
+    for (var i = 0; i < cs.length; i++) if (cs[i].category === name) n++;
+    return n;
+  }
+  // у товара без своего фото показываем фото его категории, у категории без фото — заглушку
+  function mediaHTML(image, emoji, fallback) {
+    var src = image || fallback || '';
+    return src ? '<img src="' + esc(src) + '" alt="" loading="lazy" data-ph="1">' : PH;
+  }
+  document.addEventListener('error', function (e) {
+    var t = e.target;
+    if (t && t.tagName === 'IMG' && t.dataset.ph && t.parentNode) t.parentNode.innerHTML = PH;
+  }, true);
 
   function cardHTML(p) {
     return '<article class="card' + (p.available ? '' : ' is-off') + '" data-pid="' + esc(p.id) + '">' +
-      '<div class="card__img" data-action="open-product" data-id="' + esc(p.id) + '">' + mediaHTML(p.image, p.emoji) + '</div>' +
+      '<div class="card__img" data-action="open-product" data-id="' + esc(p.id) + '">' + mediaHTML(p.image, p.emoji, catImage(p.category)) + (p.badge ? '<span class="pbadge">' + esc(p.badge) + '</span>' : '') + '</div>' +
       '<div class="card__body">' +
         '<div class="card__name" data-action="open-product" data-id="' + esc(p.id) + '">' + esc(p.name) + '</div>' +
         '<div class="card__meta">' + esc(p.weight) + '</div>' +
-        '<div class="card__foot"><span class="price">' + fmt(p.price) + '</span><span class="qty" data-qty="' + esc(p.id) + '">' + qtyControl(p) + '</span></div>' +
+        '<div class="card__foot"><span class="price">' + fmt(p.price) + (p.oldPrice > p.price ? ' <s class="old">' + fmt(p.oldPrice) + '</s>' : '') + '</span><span class="qty" data-qty="' + esc(p.id) + '">' + qtyControl(p) + '</span></div>' +
       '</div></article>';
   }
 
   function tileHTML(c) {
-    return '<button class="card tile" data-action="open-cat" data-cat="' + esc(c.name) + '">' +
+    var soon = !catCount(c.name);
+    return '<button class="card tile' + (soon ? ' tile--soon' : '') + '" data-action="open-cat" data-cat="' + esc(c.name) + '">' +
       '<span class="card__img">' + mediaHTML(c.image, c.emoji) + '</span>' +
-      '<span class="card__body"><span class="card__name">' + esc(c.name) + '</span></span></button>';
+      '<span class="card__body"><span class="card__name">' + esc(c.name) + '</span>' + (soon ? '<span class="soon">Скоро</span>' : '') + '</span></button>';
+  }
+
+  // быстрые категории кружками (только те, где уже есть товары)
+  function renderCircles() {
+    var el = $('#circles');
+    var list = state.data.categories.filter(function (c) { return catCount(c.name) > 0; });
+    el.hidden = !list.length || !!state.query.trim();
+    el.innerHTML = list.map(function (c) {
+      return '<button class="circle" data-action="open-cat" data-cat="' + esc(c.name) + '"><span class="circle__img">' + mediaHTML(c.image, c.emoji) + '</span><span class="circle__t">' + esc(c.name) + '</span></button>';
+    }).join('');
+  }
+
+  // нижняя панель
+  function renderTabbar() {
+    var n = cartCount();
+    var tabs = [
+      ['home', 'catalog', 'Каталог', true],
+      ['tab-search', 'search', 'Поиск', false],
+      ['open-cart', 'cart', 'Корзина', false],
+      ['open-orders', 'orders', 'Заказы', false],
+    ];
+    $('#tabbar').innerHTML = '<div class="tabbar__in">' + tabs.map(function (t) {
+      return '<button class="tab' + (t[3] ? ' is-on' : '') + '" data-action="' + t[0] + '">' + icon(t[1], 24) + '<span>' + t[2] + '</span>' +
+        (t[0] === 'open-cart' && n ? '<i class="tab__n">' + n + '</i>' : '') + '</button>';
+    }).join('') + '</div>';
   }
 
   function renderHeader() {
@@ -233,6 +277,7 @@
     el.innerHTML = html;
     $('#empty').hidden = shown > 0;
     renderBanners();
+    renderCircles();
   }
 
   // точечное обновление кнопки количества, чтобы не перерисовывать всю сетку
@@ -250,6 +295,7 @@
     var bar = $('#cartBar'), n = cartCount();
     bar.hidden = n === 0 || !canOrder();
     if (!bar.hidden) bar.innerHTML = '<span>Корзина · ' + n + '</span><span>' + fmt(cartTotal()) + '</span>';
+    renderTabbar();
   }
 
   // ---------- шторки ----------
@@ -333,7 +379,7 @@
   function openProduct(id) {
     var p = product(id);
     if (!p) return;
-    var body = '<div class="hero-img">' + mediaHTML(p.image, p.emoji) + '</div>' +
+    var body = '<div class="hero-img">' + mediaHTML(p.image, p.emoji, catImage(p.category)) + '</div>' +
       '<p class="muted" style="margin-bottom:6px">' + esc(p.weight) + '</p><p>' + esc(p.description) + '</p>';
     var foot = '<div class="row"><span class="price" style="font-size:20px">' + fmt(p.price) + '</span><span data-sheet-qty="' + esc(p.id) + '">' + qtyControl(p) + '</span></div>';
     openSheet('product', p.name, body, foot);
@@ -548,6 +594,10 @@
         var row = $('#searchRow'); row.hidden = !row.hidden;
         if (!row.hidden) $('#search').focus(); else { state.query = ''; $('#search').value = ''; renderCatalog(); }
         break;
+      case 'tab-search':
+        closeAll(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        $('#searchRow').hidden = false; $('#search').focus();
+        break;
       case 'open-menu': openMenu(); break;
       case 'open-mode': closeSheet('menu', true); openMode(); break;
       case 'mode-pick': modeSel = el.dataset.v; paintModes(); haptic('select'); break;
@@ -602,7 +652,7 @@
 
   // ---------- старт ----------
   function start() {
-    renderHeader();
+    renderHeader(); renderTabbar();
     if (!state.mode) showWelcome(); // выбор уже сделан — при обновлении страницы не возвращаем на знакомство
     try { if (WA && WA.ready) WA.ready(); } catch (e) {}
     load().then(function (d) {

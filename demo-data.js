@@ -3,9 +3,6 @@
 // image — путь к фото категории (WebP 640×640, лежат в img/categories/).
 window.DEMO_DATA = {
   categories: [
-    { group: 'Наборы', name: 'Сырная тарелка', emoji: '🧀', image: '' },
-    { group: 'Наборы', name: 'Нарезка к столу', emoji: '🥓', image: '' },
-    { group: 'Наборы', name: 'Набор на шашлык', emoji: '🍖', image: '' },
     { group: 'Полуфабрикаты', name: 'Пельмени', emoji: '🥟', image: 'img/categories/pelmeni.webp' },
     { group: 'Полуфабрикаты', name: 'Вареники', emoji: '🥟', image: 'img/categories/vareniki.webp' },
     { group: 'Полуфабрикаты', name: 'Прочие полуфабрикаты', emoji: '🍲', image: 'img/categories/prochie-polufabrikaty.webp' },
@@ -65,7 +62,10 @@ window.DEMO_DATA = {
     { group: 'Напитки', name: 'Газированные напитки', emoji: '🥤', image: 'img/categories/gazirovannye-napitki.webp' },
     { group: 'Мороженое', name: 'Порционное мороженое', emoji: '🍦', image: '' },
     { group: 'Мороженое', name: 'Семейное мороженое', emoji: '🍨', image: '' },
-    { group: 'Яйцо', name: 'Яйцо куриное', emoji: '🥚', image: 'img/categories/yaytso.webp' }
+    { group: 'Яйцо', name: 'Яйцо куриное', emoji: '🥚', image: 'img/categories/yaytso.webp' },
+    { group: 'Наборы', name: 'Сырная тарелка', emoji: '🧀', image: '' },
+    { group: 'Наборы', name: 'Нарезка к столу', emoji: '🥓', image: '' },
+    { group: 'Наборы', name: 'Набор на шашлык', emoji: '🍖', image: '' },
   ],
   catalog: [
     { id: 'p1', category: 'Полутвердый сыр', name: 'Сыр «Российский»', description: 'Классический мягкий вкус, подходит для бутербродов и запекания', price: 690, weight: '300 г', emoji: '🧀', image: '', available: true },

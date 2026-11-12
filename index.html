@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Сыры&amp;Колбасы">
 <link rel="stylesheet" href="styles.css?v=3">
-<link rel="stylesheet" href="tiles.css?v=4">
+<link rel="stylesheet" href="tiles.css?v=5">
 <link rel="stylesheet" href="welcome.css?v=2">
 <!-- MAX Bridge: даёт window.WebApp внутри мессенджера. Вне MAX приложение работает как обычный сайт -->
 <script src="https://st.max.ru/js/max-web-app.js"></script>
@@ -40,6 +40,8 @@
 <div id="banners" class="banners"></div>
 </section>
 
+<nav id="circles" class="circles" aria-label="Категории" hidden></nav>
+
 <nav id="cats" class="cats" aria-label="Разделы"></nav>
 
 <main id="catalog" class="catalog"></main>
@@ -47,13 +49,14 @@
 <div id="loading" class="empty">Загружаем каталог…</div>
 </div>
 
+<nav id="tabbar" class="tabbar" aria-label="Навигация"></nav>
 <button id="cartBar" class="cartbar" data-action="open-cart" hidden></button>
 <div id="sheets"></div>
 <div id="toast" class="toast" role="status"></div>
 
 <script src="config.js?v=8"></script>
-<script src="demo-data.js?v=12"></script>
-<script src="app.js?v=9"></script>
+<script src="demo-data.js?v=13"></script>
+<script src="app.js?v=10"></script>
 <script src="checkout.js?v=5"></script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });</script>
 </body>
