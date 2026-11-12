@@ -593,7 +593,7 @@
   window.App = {
     cfg: CFG, wa: WA, state: state,
     esc: esc, fmt: fmt, $: $, store: store, toast: toast, haptic: haptic, icon: icon,
-    cartLines: cartLines, cartTotal: cartTotal, cartCount: cartCount, clearCart: clearCart,
+    cartLines: cartLines, cartTotal: cartTotal, cartCount: cartCount, clearCart: clearCart, setQty: setQty, openCart: openCart,
     openSheet: openSheet, closeSheet: closeSheet, sheetEl: sheetEl,
     renderCartBar: renderCartBar,
     getMode: mode, getPlace: function () { return state.place; },

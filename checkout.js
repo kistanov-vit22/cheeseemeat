@@ -80,6 +80,7 @@
       name: name, phone: profile.phone || '', address: pl.address || profile.address || '', comment: '',
       hasDelivery: false, hasPickup: false, sending: false // способ выбран на главном экране, переключатель скрыт
     };
+    if (co.day === 0 && slotsFor(0).some(function (x) { return x.ok; })) co.slot = 'asap'; // по умолчанию «как можно скорее»
     var phoneBtn = (WA && WA.requestContact) ? '<button type="button" class="btn btn--ghost btn--sm" data-action="co-phone">Из MAX</button>' : '';
     var body =
       '<div class="seg" id="co-seg"></div>' +
@@ -100,12 +101,22 @@
       else if (t.id === 'co-address') co.address = t.value;
       else if (t.id === 'co-comment') co.comment = t.value;
       var f = t.closest('.field'); if (f) f.classList.remove('is-bad');
+      if (t.id === 'co-name' || t.id === 'co-phone' || t.id === 'co-address') saveProfile(); // запоминаем, даже если заказ не оформили
     });
     sh.addEventListener('change', function (e) {
       if (e.target.id === 'co-zone') { co.zoneId = e.target.value; renderDyn(); renderTotals(); }
       if (e.target.id === 'co-point') { co.pickupId = e.target.value; renderDyn(); }
     });
     renderSeg(); renderDyn(); renderDays(); renderSlots(); renderTotals();
+  }
+
+  function saveProfile() {
+    var old = A.store('profile') || {};
+    A.store('profile', {
+      name: co.name.trim() || old.name || '',
+      phone: co.phone.trim() || old.phone || '',
+      address: co.address.trim() || old.address || ''
+    });
   }
 
   function renderSeg() {
@@ -164,6 +175,7 @@
     html += slots.map(function (s) {
       return '<button type="button" class="slot' + (co.slot === s.label ? ' is-on' : '') + '"' + (s.ok ? '' : ' disabled') + ' data-action="co-slot" data-v="' + esc(s.label) + '">' + s.label + '</button>';
     }).join('');
+    if (co.slot === 'asap') html += '<p class="hint" style="width:100%">Как можно скорее: ' + esc(CFG.asapText || 'в течение 1–2 часов') + '. Подтвердим время по телефону.</p>';
     if (!any) html += '<p class="hint" style="width:100%">На этот день свободного времени нет, выберите другой день</p>';
     el.innerHTML = html;
   }
@@ -227,7 +239,7 @@
       fee: serverOrder && serverOrder.delivery != null ? serverOrder.delivery : c.fee,
       slot: slotText(),
       where: co.mode === 'delivery' ? (co.address.trim() + (z ? ' (' + z.name + ')' : '')) : (p ? p.name + ', ' + p.address : ''),
-      items: A.cartLines().map(function (l) { return { name: l.p.name, qty: l.qty, sum: l.sum }; })
+      items: A.cartLines().map(function (l) { return { id: l.p.id, name: l.p.name, qty: l.qty, sum: l.sum }; })
     };
   }
 
@@ -271,10 +283,10 @@
   function orders() { return A.store('orders') || []; }
   function saveOrder(o) {
     var list = orders();
-    for (var i = 0; i < list.length; i++) if (list[i].id === o.id) list[i] = o;
+    for (var i = 0; i < list.length; i++) if (String(list[i].id) === String(o.id)) list[i] = o;
     A.store('orders', list);
   }
-  function findOrder(id) { var l = orders(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return l[i]; return null; }
+  function findOrder(id) { var l = orders(); for (var i = 0; i < l.length; i++) if (String(l[i].id) === String(id)) return l[i]; return null; }
   function isFinal(o) { return o.status === 'Выполнен' || o.status === 'Отменён'; }
 
   function refreshOrder(o) {
@@ -308,6 +320,7 @@
     }).join('');
     if (o.mode === 'delivery') html += '<div class="line row"><span>Доставка</span><span>' + (o.fee ? fmt(o.fee) : 'бесплатно') + '</span></div>';
     html += '<div class="row big" style="padding-top:10px;font-weight:700;font-size:17px"><span>Итого</span><span>' + fmt(o.total) + '</span></div>';
+    html += '<button class="btn" style="margin-top:14px" data-action="order-repeat" data-id="' + esc(o.id) + '">Повторить заказ</button>';
     if (CFG.supportPhone) html += '<p class="hint" style="margin-top:12px">Вопросы по заказу: ' + esc(CFG.supportPhone) + '</p>';
     return html;
   }
@@ -341,11 +354,27 @@
       var el = $('#orders-list'); if (!el) return;
       el.innerHTML = orders().map(function (o) {
         return '<div class="order-card" data-action="order-open" data-id="' + esc(o.id) + '"><div class="row"><b>№' + esc(o.id) + '</b><span class="badge' + badgeClass(o.status) + '">' + esc(o.status) + '</span></div>' +
-          '<div class="muted" style="margin-top:4px">' + esc(o.slot) + ' · ' + fmt(o.total) + '</div></div>';
+          '<div class="muted" style="margin-top:4px">' + esc(o.slot) + ' · ' + fmt(o.total) + '</div>' +
+          '<button class="btn btn--ghost btn--sm" style="margin-top:8px" data-action="order-repeat" data-id="' + esc(o.id) + '">Повторить заказ</button></div>';
       }).join('');
     }
     paint();
     Promise.all(orders().map(refreshOrder)).then(paint);
+  }
+
+  function repeatOrder(id) {
+    var o = findOrder(id); if (!o) return;
+    var cat = A.state.data.catalog, added = 0, missing = [];
+    (o.items || []).forEach(function (it) {
+      var p = null;
+      for (var i = 0; i < cat.length; i++) if ((it.id && cat[i].id === it.id) || (!it.id && cat[i].name === it.name)) { p = cat[i]; break; }
+      if (p && p.available) { A.setQty(p.id, (A.state.cart[p.id] || 0) + it.qty); added++; } else missing.push(it.name);
+    });
+    A.closeSheet('order', true); A.closeSheet('orders', true);
+    if (!added) { A.toast('Этих товаров сейчас нет в наличии'); return; }
+    A.toast(missing.length ? 'Добавили в корзину. Нет в наличии: ' + missing.join(', ') : 'Заказ добавлен в корзину');
+    A.haptic('success');
+    A.openCart();
   }
 
   function syncOrdersBtn() { var b = $('#ordersBtn'); if (b) b.hidden = orders().length === 0; }
@@ -367,6 +396,7 @@
       case 'co-submit': submit(); break;
       case 'open-orders': openOrders(); break;
       case 'order-open': openOrder(el.dataset.id); break;
+      case 'order-repeat': repeatOrder(el.dataset.id); break;
     }
   };
   A.onReady = function () {

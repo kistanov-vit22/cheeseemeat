@@ -3,6 +3,9 @@
 // image — путь к фото категории (WebP 640×640, лежат в img/categories/).
 window.DEMO_DATA = {
   categories: [
+    { group: 'Наборы', name: 'Сырная тарелка', emoji: '🧀', image: '' },
+    { group: 'Наборы', name: 'Нарезка к столу', emoji: '🥓', image: '' },
+    { group: 'Наборы', name: 'Набор на шашлык', emoji: '🍖', image: '' },
     { group: 'Полуфабрикаты', name: 'Пельмени', emoji: '🥟', image: 'img/categories/pelmeni.webp' },
     { group: 'Полуфабрикаты', name: 'Вареники', emoji: '🥟', image: 'img/categories/vareniki.webp' },
     { group: 'Полуфабрикаты', name: 'Прочие полуфабрикаты', emoji: '🍲', image: 'img/categories/prochie-polufabrikaty.webp' },
