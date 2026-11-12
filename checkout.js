@@ -240,10 +240,11 @@
     var btn = $('#co-submit'); btn.disabled = true; btn.textContent = 'Отправляем…';
 
     var p;
-    if (!CFG.API_URL) {
+    var API = CFG.ORDER_URL || CFG.API_URL; // ORDER_URL: тест — каталог из демо, а заказ уходит в таблицу
+    if (!API) {
       p = new Promise(function (res) { setTimeout(function () { res({ ok: true, order: { id: 'D' + (1000 + Math.floor(Math.random() * 9000)), token: rand(12) } }); }, 600); });
     } else {
-      p = fetch(CFG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload()) })
+      p = fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload()) })
         .then(function (r) { return r.json(); });
     }
     p.then(function (res) {
@@ -278,11 +279,12 @@
 
   function refreshOrder(o) {
     if (isFinal(o)) return Promise.resolve(o);
-    if (!CFG.API_URL) { // демо: статус «двигается» сам каждые 20 секунд
+    var API = CFG.ORDER_URL || CFG.API_URL;
+    if (!API) { // демо: статус «двигается» сам каждые 20 секунд
       var flow = FLOW[o.mode], idx = Math.min(Math.floor((Date.now() - o.createdAt) / 20000), flow.length - 1);
       o.status = flow[idx]; saveOrder(o); return Promise.resolve(o);
     }
-    return fetch(CFG.API_URL + '?action=status&id=' + encodeURIComponent(o.id) + '&token=' + encodeURIComponent(o.token), { cache: 'no-store' })
+    return fetch(API + '?action=status&id=' + encodeURIComponent(o.id) + '&token=' + encodeURIComponent(o.token), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (res) { if (res && res.status) { o.status = res.status; saveOrder(o); } return o; })
       .catch(function () { return o; });

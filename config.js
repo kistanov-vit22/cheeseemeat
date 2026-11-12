@@ -17,6 +17,9 @@ window.APP_CONFIG = {
   // Пока пусто — приложение работает в демо-режиме на тестовых данных.
   API_URL: '',
 
+  // ТЕСТ: заказы уходят в таблицу, а каталог остаётся демо (demo-data.js). При переезде каталога URL переносится в API_URL.
+  ORDER_URL: 'https://script.google.com/macros/s/AKfycbxGHP4NBERTHL8Z-Q2kr2zjsf26s2udoacYm3k_8TVb412BOcVLLxDISN_MrTBs2FdvEA/exec',
+
   // Контакты (показываются в меню и на экране заказа). Можно оставить пустыми.
   supportPhone: '',
   contactsText: 'Магазин: ул. Ленина, 10. Ежедневно с 10:00 до 22:00',
