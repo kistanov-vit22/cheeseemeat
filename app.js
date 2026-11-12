@@ -603,7 +603,7 @@
   // ---------- старт ----------
   function start() {
     renderHeader();
-    showWelcome();
+    if (!state.mode) showWelcome(); // выбор уже сделан — при обновлении страницы не возвращаем на знакомство
     try { if (WA && WA.ready) WA.ready(); } catch (e) {}
     load().then(function (d) {
       state.data = d;
