@@ -368,6 +368,47 @@
     if (canOrder()) openNotice();
   }
 
+  // ---------- входная страница (знакомство + выбор) ----------
+  function welcomeHTML() {
+    var brand = CFG.logo
+      ? '<img class="welcome__logo" src="' + esc(CFG.logo) + '" alt="' + esc(CFG.shopName) + '">'
+      : '<h1 class="welcome__name">' + esc(CFG.shopName) + '</h1>';
+    var rows = MODE_IDS.map(function (id) {
+      var on = state.mode === id;
+      return '<button class="opt opt--row' + (on ? ' is-on' : '') + '" data-action="welcome-pick" data-v="' + id + '">' +
+        '<span class="opt__ic">' + icon(id) + '</span>' +
+        '<span class="opt__t"><b>' + esc(CFG.modes[id].title) + '</b></span>' +
+        '<span class="radio"></span></button>';
+    }).join('');
+    return '<div class="welcome__col">' +
+      '<div class="welcome__hero">' + brand + '<p class="welcome__tag">' + esc(CFG.tagline || '') + '</p></div>' +
+      '<div class="welcome__panel">' +
+        (CFG.welcome ? '<p class="welcome__hi">' + esc(CFG.welcome) + '</p>' : '') +
+        rows +
+        (CFG.welcomeInfo ? '<p class="welcome__info">' + esc(CFG.welcomeInfo) + '</p>' : '') +
+      '</div></div>';
+  }
+  function showWelcome() {
+    var w = $('#welcome');
+    w.innerHTML = welcomeHTML();
+    w.classList.remove('is-out');
+    w.hidden = false;
+    document.body.classList.add('welcome-on');
+  }
+  function hideWelcome() {
+    var w = $('#welcome');
+    w.classList.add('is-out');
+    document.body.classList.remove('welcome-on');
+    setTimeout(function () { w.hidden = true; }, 260);
+    window.scrollTo(0, 0);
+  }
+  function pickWelcome(v) {
+    state.mode = v; store('mode', v);
+    hideWelcome();
+    afterModeChange();
+    if (canOrder()) openNotice();
+  }
+
   // подсказка перед заказом
   function openNotice() {
     if (noticeShown || !CFG.notice) return;
@@ -461,6 +502,7 @@
       case 'open-mode': closeSheet('menu', true); openMode(); break;
       case 'mode-pick': modeSel = el.dataset.v; paintModes(); haptic('select'); break;
       case 'mode-save': saveMode(); break;
+      case 'welcome-pick': pickWelcome(el.dataset.v); haptic('select'); break;
       case 'open-place': openPlace(); break;
       case 'point-pick': pickSel = el.dataset.v; paintPoints(); haptic('select'); break;
       case 'place-save': savePlace(); break;
@@ -510,6 +552,7 @@
   // ---------- старт ----------
   function start() {
     renderHeader();
+    showWelcome();
     try { if (WA && WA.ready) WA.ready(); } catch (e) {}
     load().then(function (d) {
       state.data = d;
@@ -519,7 +562,6 @@
       saveCart();
       renderChips(); renderPlaceBar(); renderCatalog(); renderCartBar();
       if (window.App.onReady) window.App.onReady();
-      if (!state.mode) openMode(); else if (canOrder()) openNotice();
     }).catch(function () {
       $('#loading').textContent = 'Не удалось загрузить каталог. Попробуйте позже.';
     });
