@@ -272,6 +272,7 @@
     requestAnimationFrame(function () { ov.classList.add('is-in'); sh.classList.add('is-in'); });
     stack.push(id);
     syncBack();
+    syncGuard();
     return sh;
   }
   function closeSheet(id, silent) {
@@ -281,10 +282,34 @@
     stack = stack.filter(function (s) { return s !== id; });
     if (id === 'category') openCat = null;
     if (!silent) syncBack();
+    syncGuard();
   }
   function closeTop() { if (stack.length) closeSheet(stack[stack.length - 1]); }
   function closeAll() { stack.slice().forEach(function (id) { closeSheet(id); }); }
   function sheetEl(id) { return document.querySelector('.sheet[data-sheet="' + id + '"]'); }
+
+  // «Назад» (свайп на Android, кнопка браузера) закрывает верхнее окошко, а не уходит с сайта.
+  // Пока открыто хоть одно окошко, в истории браузера лежит одна служебная запись.
+  var guardOn = false, selfBack = false;
+  function layers() { return stack.length + (welcomeSel ? 1 : 0); }
+  function syncGuard() {
+    if (layers() > 0 && !guardOn) {
+      try { history.pushState({ layer: 1 }, ''); guardOn = true; } catch (e) {}
+    } else if (layers() === 0 && guardOn) {
+      // с задержкой: если сразу откроется другое окошко, запись остаётся
+      setTimeout(function () {
+        if (layers() === 0 && guardOn) { guardOn = false; selfBack = true; history.back(); }
+      }, 0);
+    }
+  }
+  window.addEventListener('popstate', function () {
+    if (selfBack) { selfBack = false; return; }
+    if (!guardOn) return;
+    guardOn = false; // служебную запись «назад» уже забрал
+    if (stack.length) closeTop();
+    else if (welcomeSel) { welcomeSel = null; paintWelcome(); }
+    syncGuard();
+  });
 
   if (WA && WA.BackButton) { try { WA.BackButton.onClick(closeTop); } catch (e) {} }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeTop(); });
@@ -427,7 +452,9 @@
   }
   function pickWelcome(v) {
     state.mode = v; store('mode', v);
+    welcomeSel = null;
     hideWelcome();
+    syncGuard();
     afterModeChange();
     if (canOrder()) openNotice();
   }
@@ -525,7 +552,7 @@
       case 'open-mode': closeSheet('menu', true); openMode(); break;
       case 'mode-pick': modeSel = el.dataset.v; paintModes(); haptic('select'); break;
       case 'mode-save': saveMode(); break;
-      case 'welcome-pick': welcomeSel = el.dataset.v; paintWelcome(); haptic('select'); break;
+      case 'welcome-pick': welcomeSel = el.dataset.v; paintWelcome(); syncGuard(); haptic('select'); break;
       case 'welcome-confirm': if (welcomeSel) pickWelcome(welcomeSel); break;
       case 'open-place': openPlace(); break;
       case 'point-pick': pickSel = el.dataset.v; paintPoints(); haptic('select'); break;
