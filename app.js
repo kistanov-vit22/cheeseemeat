@@ -369,13 +369,17 @@
   }
 
   // ---------- входная страница (знакомство + выбор) ----------
+  var welcomeSel = null;
+  function xx(text) {
+    // неизвестные места (XXXXX) подсвечиваем, чтобы их было видно и заполнили
+    return esc(text).replace(/XXXXX/g, '<mark class="xx">XXXXX</mark>');
+  }
   function welcomeHTML() {
     var brand = CFG.logo
       ? '<img class="welcome__logo" src="' + esc(CFG.logo) + '" alt="' + esc(CFG.shopName) + '">'
       : '<h1 class="welcome__name">' + esc(CFG.shopName) + '</h1>';
     var rows = MODE_IDS.map(function (id) {
-      var on = state.mode === id;
-      return '<button class="opt opt--row' + (on ? ' is-on' : '') + '" data-action="welcome-pick" data-v="' + id + '">' +
+      return '<button class="opt opt--row" data-action="welcome-pick" data-v="' + id + '">' +
         '<span class="opt__ic">' + icon(id) + '</span>' +
         '<span class="opt__t"><b>' + esc(CFG.modes[id].title) + '</b></span>' +
         '<span class="radio"></span></button>';
@@ -386,10 +390,29 @@
         (CFG.welcome ? '<p class="welcome__hi">' + esc(CFG.welcome) + '</p>' : '') +
         rows +
         (CFG.welcomeInfo ? '<p class="welcome__info">' + esc(CFG.welcomeInfo) + '</p>' : '') +
-      '</div></div>';
+      '</div></div>' +
+      '<div class="welcome__sheet" id="welcomeSheet"></div>';
+  }
+  function paintWelcome() {
+    var w = $('#welcome'), sh = $('#welcomeSheet');
+    w.querySelectorAll('.opt--row').forEach(function (b) { b.classList.toggle('is-on', b.dataset.v === welcomeSel); });
+    if (!welcomeSel) { sh.classList.remove('is-in'); return; }
+    var m = CFG.modes[welcomeSel];
+    sh.innerHTML = '<h2>' + esc(m.title) + '</h2><p>' + xx(m.welcomeText || m.text || '') + '</p>' +
+      '<button class="btn" data-action="welcome-confirm">' + esc(CFG.welcomeButton || 'Продолжить') + '</button>';
+    sh.classList.add('is-in');
   }
   function showWelcome() {
     var w = $('#welcome');
+    // если разметку или стили затёрли при правке index.html — создаём сами
+    if (!w) {
+      w = document.createElement('div'); w.id = 'welcome'; w.className = 'welcome'; w.hidden = true;
+      document.body.insertBefore(w, document.body.firstChild);
+    }
+    if (!document.querySelector('link[href^="welcome.css"]')) {
+      var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'welcome.css?v=2'; document.head.appendChild(l);
+    }
+    welcomeSel = null;
     w.innerHTML = welcomeHTML();
     w.classList.remove('is-out');
     w.hidden = false;
@@ -502,7 +525,8 @@
       case 'open-mode': closeSheet('menu', true); openMode(); break;
       case 'mode-pick': modeSel = el.dataset.v; paintModes(); haptic('select'); break;
       case 'mode-save': saveMode(); break;
-      case 'welcome-pick': pickWelcome(el.dataset.v); haptic('select'); break;
+      case 'welcome-pick': welcomeSel = el.dataset.v; paintWelcome(); haptic('select'); break;
+      case 'welcome-confirm': if (welcomeSel) pickWelcome(welcomeSel); break;
       case 'open-place': openPlace(); break;
       case 'point-pick': pickSel = el.dataset.v; paintPoints(); haptic('select'); break;
       case 'place-save': savePlace(); break;
