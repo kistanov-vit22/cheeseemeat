@@ -61,12 +61,13 @@ window.DEMO_DATA = {
     { group: 'Овощи, грибы, ягоды', name: 'Замороженные ягоды', emoji: '🫐', image: '' },
     { group: 'Напитки', name: 'Морсы', emoji: '🥤', image: '' },
     { group: 'Напитки', name: 'Сезонные напитки', emoji: '🥤', image: '' },
-    { group: 'Напитки', name: 'Вода', emoji: '💧', image: '' },
+    { group: 'Напитки', name: 'Вода', emoji: '💧', image: 'img/categories/voda.webp' },
     { group: 'Напитки', name: 'Минеральная вода', emoji: '💧', image: '' },
     { group: 'Напитки', name: 'Квасы', emoji: '🍺', image: '' },
+    { group: 'Напитки', name: 'Газированные напитки', emoji: '🥤', image: 'img/categories/gazirovannye-napitki.webp' },
     { group: 'Мороженое', name: 'Порционное мороженое', emoji: '🍦', image: '' },
     { group: 'Мороженое', name: 'Семейное мороженое', emoji: '🍨', image: '' },
-    { group: 'Яйцо', name: 'Яйцо куриное', emoji: '🥚', image: '' }
+    { group: 'Яйцо', name: 'Яйцо куриное', emoji: '🥚', image: 'img/categories/yaytso.webp' }
   ],
   catalog: [
     { id: 'p1', category: 'Полутвердый сыр', name: 'Сыр «Российский»', description: 'Классический мягкий вкус, подходит для бутербродов и запекания', price: 690, weight: '300 г', emoji: '🧀', image: '', available: true },
